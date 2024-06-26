@@ -1,5 +1,11 @@
 const { generateRandomUser } = require("../support/utils");
 
+Cypress.Commands.add("homePageIsVisible", () => {
+  cy.get("header").should("be.visible");
+  cy.get("#slider").should("be.visible");
+  cy.get(".container").should("be.visible");
+});
+
 Cypress.Commands.add("userSignUp", () => {
   cy.visit("https://www.automationexercise.com/");
   //check if home page is visible

@@ -9,8 +9,6 @@ describe("Login", () => {
     cy.get("header").should("be.visible");
     cy.get("#slider").should("be.visible");
     cy.get(".container").should("be.visible");
-    cy.visit("https://www.automationexercise.com/");
-
     cy.get('a[href="/login" ]').click();
     cy.contains("Login to your account").should("be.visible");
     cy.get('[data-qa="login-email"]').type("alicia@getnede.com");
