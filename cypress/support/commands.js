@@ -1,4 +1,5 @@
 const { generateRandomUser } = require("../support/utils");
+const { getUserFromLocalStorage } = require("../support/localStorage");
 
 Cypress.Commands.add("homePageIsVisible", () => {
   cy.get("header").should("be.visible");
@@ -16,11 +17,22 @@ Cypress.Commands.add("userSignUp", () => {
   cy.get("a[href= '/login']").should("exist").click();
   // Verify 'New User Signup!' is visible
   cy.contains("New User Signup!").should("be.visible");
-  //create a random user and fill the form, using 'custom comands' <3s
   const newUser = generateRandomUser();
-  const verifiedUser = cy.fillSignUpForm(newUser);
+  cy.fillSignUpForm(newUser);
   cy.get('[data-qa="signup-button"]').click();
+  const verifiedUser = cy.fillAccountInformation(newUser);
+  cy.contains("Account Created!").should("be.visible");
+  cy.window().then((win) => {
+    win.localStorage.setItem("user", JSON.stringify(newUser));
+  });
+  cy.window().then((win) => {
+    cy.log("=======saving to local sotorage=========");
+    const storedUser = JSON.parse(win.localStorage.getItem("user"));
+    expect(storedUser).to.deep.equal(newUser);
+    cy.log(storedUser.email);
+  });
 });
+
 Cypress.Commands.add("generateUSER", () => {
   const newUser = generateRandomUser();
   cy.request({
@@ -40,6 +52,10 @@ Cypress.Commands.add("generateUSER", () => {
 Cypress.Commands.add("fillSignUpForm", (user) => {
   cy.get('[data-qa="signup-name"]').type(user.name);
   cy.get('[data-qa="signup-email"]').type(user.email);
+});
+Cypress.Commands.add("fillLognInForm", (user) => {
+  cy.get('[data-qa="login-email"]').type(user.email);
+  cy.get('[data-qa="login-password"]').type(user.password);
 });
 
 Cypress.Commands.add("fillAccountInformation", (user) => {
@@ -76,4 +92,65 @@ Cypress.Commands.add("deleteUser", (user) => {
   });
 });
 
-Cypress.Commands.add("userSignIn", (user) => {});
+// cypress/support/commands.js
+
+Cypress.Commands.add("signInUSER", (storedUser) => {
+  return getUserFromLocalStorage().then((userData) => {
+    if (!userData.email || !userData.password) {
+      throw new Error(
+        "User email or password not found in local storage. Please register a user first."
+      );
+    }
+    cy.request({
+      method: "POST",
+      url: "https://automationexercise.com/api/login",
+      failOnStatusCode: false,
+      body: {
+        email: userData.email,
+        password: userData.password,
+      },
+      headers: {
+        "Content-Type": "application/json",
+      },
+    }).then((response) => {
+      expect(response.status).to.not.be.null;
+    });
+  });
+});
+Cypress.Commands.add("addProductsToCart", () => {
+  cy.get(".features_items").should("be.visible");
+  cy.get('a[href="/products"]').click();
+
+  cy.get(".product-image-wrapper").as("products");
+
+  // Get the total number of products
+  cy.get("@products")
+    .its("length")
+    .then((productCount) => {
+      cy.get("@products").each(($product, index) => {
+        // Hover over the product
+        cy.wrap($product)
+          .find(".single-products")
+          .trigger("mouseover", { force: true });
+
+        // Click the "Add to cart" button
+        cy.wrap($product)
+          .find("a[data-product-id]")
+          .then(($button) => {
+            // Click the button using native DOM method to avoid multiple element click error
+            $button[0].click();
+          });
+
+        // Handle the popup
+        cy.get("div.modal-content").within(() => {
+          if (index === productCount - 1) {
+            // Click "View Cart" button for the last product
+            cy.contains("View Cart").click();
+          } else {
+            // Click "Continue Shopping" for other products
+            cy.contains("Continue Shopping").click();
+          }
+        });
+      });
+    });
+});

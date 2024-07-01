@@ -1,6 +1,6 @@
-const { generateRandomUser } = require("../../support/utils");
+const { generateRandomUser } = require("../../../support/utils");
 describe("Register user", () => {
-  before(() => {
+  beforeEach(() => {
     cy.visit("https://www.automationexercise.com/");
   });
 
@@ -9,12 +9,11 @@ describe("Register user", () => {
   });
   it("user can fill account information, log in and delete user", () => {
     cy.userSignUp();
-    cy.contains("Enter Account Information").should("be.visible");
     const userAccountInformation = generateRandomUser();
-    cy.fillAccountInformation(userAccountInformation);
     cy.contains("Account Created!").should("be.visible");
     cy.get('[data-qa="continue-button"]').click();
     cy.contains("Logged in as").should("be.visible");
+    cy.deleteUser();
   });
 
   it("user tries to register with already in use email", () => {
