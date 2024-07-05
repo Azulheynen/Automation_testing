@@ -148,7 +148,7 @@ Cypress.Commands.add("addProductsToCart", () => {
             cy.contains("View Cart").click();
           } else {
             // Click "Continue Shopping" for other products
-            cy.contains("Continue Shopping").click();
+            cy.contains("Continue Shopping").click({force: true} );
           }
         });
       });

@@ -17,9 +17,14 @@ describe("products detail page", () => {
       });
   });
 
-  it("usear searchs for a product", () => {
+  it("user searchs for a product", () => {
     cy.get('a[href="/products"]').click();
     cy.contains("All Products").should("be.visible");
     cy.get('a[href="/products"]').click();
   });
+
+  it("user can filter product by category" , ( ) => {
+    cy.get('h2').contains('Category').should('be.visible')
+    cy.get('a[href="#Women"]').click()
+  })
 });
