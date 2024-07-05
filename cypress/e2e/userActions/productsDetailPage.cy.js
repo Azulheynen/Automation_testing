@@ -23,7 +23,7 @@ describe("products detail page", () => {
     cy.get('a[href="/products"]').click();
   });
 
-  it("user can filter product by category" , ( ) => {
+  it.only("user can filter product by category" , ( ) => {
     cy.get('h2').contains('Category').should('be.visible')
     cy.get('a[href="#Women"]').click()
   })

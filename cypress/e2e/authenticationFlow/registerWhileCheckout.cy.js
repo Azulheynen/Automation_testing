@@ -1,8 +1,8 @@
-const { generateRandomUser } = require("../../../support/utils");
+const { generateRandomUser } = require("../../support/utils");
 
 const {
   generateRandomCreditCard,
-} = require("../../../support/randomCreditCard");
+} = require("../../support/randomCreditCard");
 
 describe("Products in cart", () => {
   beforeEach(() => {

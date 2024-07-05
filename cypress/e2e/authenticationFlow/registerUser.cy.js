@@ -1,4 +1,4 @@
-const { generateRandomUser } = require("../../../support/utils");
+const { generateRandomUser } = require("../../support/utils");
 describe("Register user", () => {
   beforeEach(() => {
     cy.visit("https://www.automationexercise.com/");
