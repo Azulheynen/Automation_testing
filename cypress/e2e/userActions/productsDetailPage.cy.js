@@ -23,8 +23,40 @@ describe("products detail page", () => {
     cy.get('a[href="/products"]').click();
   });
 
-  it.only("user can filter product by category" , ( ) => {
+  it("user can filter product by category" , ( ) => {
     cy.get('h2').contains('Category').should('be.visible')
     cy.get('a[href="#Women"]').click()
+    cy.get('a[href="/category_products/1"]').click()
+    cy.get('h2').should('contain', 'Women - Dress Products')
+    cy.contains('Women - Dress Products')
+    cy.get('a[href="#Men"]').click()
+    cy.get('a[href="/category_products/6"]').click()
+    cy.contains('Men - Jeans Products')
+
   })
+  it("user can filter product by brand" , ( ) => {
+    cy.get('h2').contains('Brand').should('be.visible')
+    cy.get('a[href="/brand_products/H&M"]').click()
+    cy.get('h2').should('contain','Brand - H&M Products')
+    cy.get('a[href="/brand_products/Polo"]').click()
+    cy.get('h2').should('contain','Brand - Polo Products')
+
+  })
+
+it.only("user can search for a product and add all related results to cart", () => {
+ cy.get('a[href="/products"]').click()
+ cy.get('h2').contains('All Products')
+ cy.get('input#search_product').type('blue{enter}')
+ cy.get('button#submit_search').click()
+  cy.contains('Searched Products')
+  ////
+  cy.get(".product-image-wrapper").as("products");
+  cy.get("@products")
+    .its("length")
+    .then((productList) => {
+      cy.get("@products").find('p').contains(/blue|Blue/i)
+      })
+
+})
+
 });
