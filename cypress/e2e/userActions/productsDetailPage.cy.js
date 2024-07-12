@@ -49,7 +49,7 @@ describe("products detail page", () => {
     cy.get("input#search_product").type("blue{enter}");
     cy.get("button#submit_search").click();
     cy.contains("Searched Products");
-        cy.get(".product-image-wrapper").as("products");
+    cy.get(".product-image-wrapper").as("products");
     cy.get("@products")
       .its("length")
       .then((productList) => {
@@ -78,37 +78,59 @@ describe("products detail page", () => {
                     cy.contains("View Cart").click();
                   } else {
                     cy.contains("Continue Shopping").click({ force: true });
-
                   }
                 });
               });
             });
-            cy.get('a.check_out').click()
-            cy.get('a[href="/login"]').contains('Register / Login').click()
-            cy.contains("New User Signup!").should("be.visible");
-            const newUser = generateRandomUser();
-            cy.fillSignUpForm(newUser);
-            cy.get('[data-qa="signup-button"]').click();
-            const verifiedUser = cy.fillAccountInformation(newUser);
-            cy.contains("Account Created!").should("be.visible");
-  
-            cy.get('a[data-qa="continue-button"]').click()
-            cy.get('a[href="/view_cart"]').contains('Cart').as('cartButton')
-            cy.get('@cartButton').click({force: true})
-            cy.contains(/Blue | blue /i)
+          cy.get("a.check_out").click();
+          cy.get('a[href="/login"]').contains("Register / Login").click();
+          cy.contains("New User Signup!").should("be.visible");
+          const newUser = generateRandomUser();
+          cy.fillSignUpForm(newUser);
+          cy.get('[data-qa="signup-button"]').click();
+          const verifiedUser = cy.fillAccountInformation(newUser);
+          cy.contains("Account Created!").should("be.visible");
+
+          cy.get('a[data-qa="continue-button"]').click();
+          cy.get('a[href="/view_cart"]').contains("Cart").as("cartButton");
+          cy.get("@cartButton").click({ force: true });
+          cy.contains(/Blue | blue /i);
         }
       });
-  
   });
 
-  it.only("user can add a review" , () => {
+  it("user can add a review", () => {
     cy.get(".features_items").should("be.visible");
     cy.get('a[href="/products"]').click();
     cy.get('a[href="/product_details/1"]').click();
-    cy.get("#review-form").should('be.visible')
-    cy.get('input#name').type('username')
-    cy.get('input#email').type('usermail@gmail.com')
-    cy.get('textarea#review').type('I have purchased school clothing since my little one had started school. This was my 3rd lot of uniform and everything has always been really good quality, never had any issues or problems. Sometimes I order on line or take a chance and just pop in to see if I can get everything I need straight away, which actually I did last time, only had to have 1 item with the logo on to be made up and that was all done by the afternoon on the same day!')
-    cy.get('#button-review').click()
-  })
+    cy.get("#review-form").should("be.visible");
+    cy.get("input#name").type("username");
+    cy.get("input#email").type("usermail@gmail.com");
+    cy.get("textarea#review").type(
+      "I have purchased school clothing since my little one had started school. This was my 3rd lot of uniform and everything has always been really good quality, never had any issues or problems. Sometimes I order on line or take a chance and just pop in to see if I can get everything I need straight away, which actually I did last time, only had to have 1 item with the logo on to be made up and that was all done by the afternoon on the same day!"
+    );
+    cy.get("#button-review").click();
+  });
+  it.only("user adds to cart recomemded items", () => {
+    cy.get(".recommended_items").scrollIntoView().as("recommendedProducts");
+    cy.get("@recommendedProducts")
+      .find(".product-image-wrapper")
+      .then(($product) => {
+        cy.get($product).each(($item, index) => {
+          cy.get($item)
+            .find("a[data-product-id]")
+            .then(($button) => {
+              $button[0].click();
+            });
+          if (index === -1) {
+            cy.contains("View Cart").click();
+          } 
+          else {
+            cy.contains("Continue Shopping").click({});
+          }
+        });
+        cy.get("a[href='/view_cart']").first().click()
+        cy.get('tr').should('be.visible')
+      });
+  });
 });

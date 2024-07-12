@@ -20,7 +20,6 @@ describe("Products in cart", () => {
           { productId: 1, quantity: 4 },
           { productId: 2, quantity: 2 },
           { productId: 3, quantity: 1 },
-          // Add more products as needed
         ];
         cy.wrap(products).each((product) => {
           cy.get(`a[href="/product_details/${product.productId}"]`)
