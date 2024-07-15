@@ -31,4 +31,5 @@ describe("Register user", () => {
     cy.get('[data-qa="signup-button"]').click();
     cy.contains("Email Address already exist!").should("be.visible");
   });
+  
 });

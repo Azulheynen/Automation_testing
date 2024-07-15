@@ -30,6 +30,7 @@ Cypress.Commands.add("userSignUp", () => {
     const storedUser = JSON.parse(win.localStorage.getItem("user"));
     expect(storedUser).to.deep.equal(newUser);
     cy.log(storedUser.email);
+    cy.log(storedUser.address1);
   });
 });
 

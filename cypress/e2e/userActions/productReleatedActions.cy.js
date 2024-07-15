@@ -111,7 +111,7 @@ describe("products detail page", () => {
     );
     cy.get("#button-review").click();
   });
-  it.only("user adds to cart recomemded items", () => {
+  it("user adds to cart recomemded items", () => {
     cy.get(".recommended_items").scrollIntoView().as("recommendedProducts");
     cy.get("@recommendedProducts")
       .find(".product-image-wrapper")
@@ -133,4 +133,6 @@ describe("products detail page", () => {
         cy.get('tr').should('be.visible')
       });
   });
+
+  
 });

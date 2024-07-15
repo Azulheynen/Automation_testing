@@ -1,8 +1,6 @@
 const { generateRandomUser } = require("../../support/utils");
 
-const {
-  generateRandomCreditCard,
-} = require("../../support/randomCreditCard");
+const { generateRandomCreditCard } = require("../../support/randomCreditCard");
 
 describe("Products in cart", () => {
   beforeEach(() => {
@@ -48,5 +46,23 @@ describe("Products in cart", () => {
     cy.get('[data-qa="expiry-year"]').type(creditCardData.expiryYear);
     cy.get('[data-qa="pay-button"]').click();
     cy.get('[data-qa="continue-button"]').click();
+  });
+
+  it.only("user adress details are correct in checkput page", () => {
+   const newUser = cy.userSignUp();
+    cy.contains("Account Created!").should("be.visible");
+    cy.get('[data-qa="continue-button"]').click();
+    cy.contains("Logged in as").should("be.visible");
+    cy.addProductsToCart();
+    cy.window().then((win) => {
+      const storedUser = JSON.parse(win.localStorage.getItem("user"));
+      expect(storedUser).to.deep.equal(newUser);
+      cy.get('a.btn').contains('Proceed To Checkout').click()
+      cy.get("#address_delivery").contains(newUser.address1);
+      cy.get("#address_delivery").contains(newUser.address2);
+    });
+  
+    //
+    
   });
 });
